@@ -1,0 +1,2 @@
+# minishop_control
+基于python的个人便利店管理web系统，带微信小程序扫码功能
