@@ -1,5 +1,6 @@
 import mysql.connector
-
+from flask import Flask, request, jsonify
+import pymysql
 
 class Good:
     id = 0
@@ -50,3 +51,51 @@ for row in cursor:
 # 关闭连接
 cursor.close()
 cnx.close()
+
+
+
+app = Flask(__name__)
+
+# 创建数据库连接
+db = pymysql.connect(
+    host='localhost',
+    user='root',
+    password='password',
+    database='store',
+    charset='utf8mb4',
+    cursorclass=pymysql.cursors.DictCursor
+)
+
+# 新增商品的路由
+@app.route('/products', methods=['POST'])
+def add_product():
+    # 获取请求中的商品信息
+    product = request.json
+    if not product:
+        return jsonify({'error': 'Missing product information'}), 400
+    
+    # 向商品数据表插入新记录
+    try:
+        with db.cursor() as cursor:
+            sql = """
+            INSERT INTO products (name_cn, name_en, barcode, category, production_date, expiry_date, image_url, cost_price, selling_price, stock)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (
+                product.get('name_cn'),
+                product.get('name_en'),
+                product.get('barcode'),
+                product.get('category'),
+                product.get('production_date'),
+                product.get('expiry_date'),
+                product.get('image_url'),
+                product.get('cost_price'),
+                product.get('selling_price'),
+                product.get('stock')
+            ))
+            db.commit()
+            # 获取新记录的 ID 并返回
+            product_id = cursor.lastrowid
+            return jsonify({'id': product_id}), 201
+
+
