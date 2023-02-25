@@ -5,7 +5,6 @@ import pymysql
 class Good:
     id = 0
     name_cn = ''
-    name_en = ''
     barcode = ''
     category = ''
     production_date = None
@@ -35,17 +34,16 @@ for row in cursor:
     good = Good()
     good.id = row[0]
     good.name_cn = row[1]
-    good.name_en = row[2]
-    good.barcode = row[3]
-    good.category = row[4]
-    good.production_date = row[5]
-    good.expiry_date = row[6]
-    good.image = row[7]
-    good.cost_price = row[8]
-    good.selling_price = row[9]
-    good.type = row[10]
-    good.expiry_notification_date = row[11]
-    good.inventory = row[12]
+    good.barcode = row[2]
+    good.category = row[3]
+    good.production_date = row[4]
+    good.expiry_date = row[5]
+    good.image = row[6]
+    good.cost_price = row[7]
+    good.selling_price = row[8]
+    good.type = row[9]
+    good.expiry_notification_date = row[10]
+    good.inventory = row[11]
     goods_list.append(good)
 
 # 关闭连接
@@ -78,12 +76,11 @@ def add_product():
     try:
         with db.cursor() as cursor:
             sql = """
-            INSERT INTO products (name_cn, name_en, barcode, category, production_date, expiry_date, image_url, cost_price, selling_price, stock)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO products (name_cn, barcode, category, production_date, expiry_date, image_url, cost_price, selling_price, stock)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             cursor.execute(sql, (
                 product.get('name_cn'),
-                product.get('name_en'),
                 product.get('barcode'),
                 product.get('category'),
                 product.get('production_date'),
